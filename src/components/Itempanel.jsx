@@ -1,9 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PageTitle from "./PageTitle";
 import Item from "./Item";
 import AddItem from "./AddItem";
 import { fetchGetItemsData } from "../redux/slices/apiSlice";
+import { SkeletonTheme } from "react-loading-skeleton";
+import LoadingSkeleton from "./LoadingSkeleton";
+import Modal from "./Modal";
 
 const Itempanel = ({ pageTitle }) => {
   const authData = useSelector((state) => state.auth.authData);
@@ -12,16 +15,23 @@ const Itempanel = ({ pageTitle }) => {
   const dispatch = useDispatch();
 
   const getTasksData = useSelector((state) => state.apis.getItemsData);
-  console.log(getTasksData);
+  const isOpen = useSelector((state) => state.modal.isOpen);
+  // console.log(isOpen);
+  // console.log(getTasksData);
+
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!userKey) return;
 
     const fetchGetItems = async () => {
       try {
+        setLoading(true);
         await dispatch(fetchGetItemsData(userKey)).unwrap(); //useEffect 내부에서 디스패치 함수를 호출하여 thunk 함수 실행
       } catch (error) {
         console.error("Failed to Fetch Items:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -32,9 +42,28 @@ const Itempanel = ({ pageTitle }) => {
     <div className="panel bg-[212121] w-4/5 h-full rounded-md border border-gray-500 py-5 px-4 overflow-y-auto ">
       {userKey ? (
         <div className="panel-wrapper w-full h-full">
+          {isOpen && <Modal />}
+
           <PageTitle title={pageTitle} />
           <div className="items flex flex-wrap">
-            <Item />
+            {loading ? (
+              <SkeletonTheme
+                baseColor="#202020"
+                highlightColor="#444"
+                width="100%"
+                height="25vh"
+              >
+                <LoadingSkeleton />
+                <LoadingSkeleton />
+                <LoadingSkeleton />
+                <LoadingSkeleton />
+              </SkeletonTheme>
+            ) : (
+              getTasksData?.map((item, idx) => <Item key={idx} task={item} />)
+            )}
+
+            {}
+
             <AddItem />
           </div>
         </div>
