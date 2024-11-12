@@ -3,12 +3,30 @@ import {
   GET_TASKS_API_URL,
   DELETE_TASK_API_URL,
   POST_TASK_API_URL,
+  UPDATE_TASK_API_URL,
 } from "../../utils/apiUrl";
 import {
   deleteRequest,
   getRequest,
   postRequest,
+  putRequest,
 } from "../../utils/requestMethods";
+
+const updateItemFecthThunk = (actionType, apiURL) => {
+  return createAsyncThunk(actionType, async (updateData) => {
+    // console.log(apiURL, userId);
+    const options = {
+      body: JSON.stringify(updateData),
+    };
+    return await putRequest(apiURL, options);
+  });
+};
+
+//Update Item data
+export const fetchUpdateItemData = updateItemFecthThunk(
+  "fetchUpdateItem", //action type
+  UPDATE_TASK_API_URL //요청 URL
+); //thunk 함수 호출
 
 const getItemsFecthThunk = (actionType, apiURL) => {
   return createAsyncThunk(actionType, async (userId) => {
@@ -77,6 +95,7 @@ const apiSlice = createSlice({
     getItemsData: null,
     deleteItemData: null,
     fetchPostItem: null,
+    updateItemData: null,
   },
   extraReducers: (builder) => {
     builder
@@ -85,7 +104,9 @@ const apiSlice = createSlice({
       .addCase(fetchDeleteItemData.fulfilled, handleFulfilled("deleteItemData"))
       .addCase(fetchDeleteItemData.rejected, handleRejected)
       .addCase(fetchPostItemData.fulfilled, handleFulfilled("postItemData"))
-      .addCase(fetchPostItemData.rejected, handleRejected);
+      .addCase(fetchPostItemData.rejected, handleRejected)
+      .addCase(fetchUpdateItemData.fulfilled, handleFulfilled("updateItemData"))
+      .addCase(fetchUpdateItemData.rejected, handleRejected);
   },
 }); //Slice 객체 저장
 
