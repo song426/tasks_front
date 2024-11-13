@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import {
   fetchDeleteItemData,
   fetchGetItemsData,
+  fetchUpdateCompletedData,
 } from "../redux/slices/apiSlice";
 
 import { toast } from "react-toastify";
@@ -17,6 +18,8 @@ const Item = ({ task }) => {
   const { _id, title, description, date, iscompleted, isimportant, userid } =
     task;
   // console.log(_id, title, description, date, iscompleted, isimportant, userid);
+
+  const [isCompleted, setIsCompleted] = useState(iscompleted);
 
   const dispatch = useDispatch();
 
@@ -92,9 +95,30 @@ const Item = ({ task }) => {
     dispatch(openModal({ modalType: "update", task }));
   };
 
-  const changeCompleted = () => {
+  const changeCompleted = async () => {
     // setIsCompleted(!isCompleted)을 호출하면 상태 업데이트가 비동기적으로 이루어지기 때문에, isCompleted의 값이 즉시 변경되지 않는다.
     // 따라서 updateCompletedData 객체를 생성할 때 isCompleted의 이전 값이 사용된다. 이로 인해 true/false가 한 단계씩 밀리게 된다.
+
+    const newIsCompleted = !isCompleted; // 데이터베이스에 있는 iscompleted의 반대값 저장
+
+    setIsCompleted(newIsCompleted);
+
+    // console.log(newIsCompleted);
+
+    const updateCompletedData = {
+      id: _id,
+      isCompleted: newIsCompleted,
+    };
+    try {
+      await dispatch(fetchUpdateCompletedData(updateCompletedData)).unwrap();
+      newIsCompleted
+        ? toast.success("완료 처리 되었습니다.")
+        : toast.success("미완료 처리 되었습니다.");
+      await dispatch(fetchGetItemsData(userid)).unwrap();
+    } catch (error) {
+      toast.error("완료 처리에 실패했습니다.");
+      console.error("update error: ", error);
+    }
   };
 
   return (
