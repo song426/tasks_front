@@ -122,24 +122,26 @@ const Item = ({ task }) => {
   };
 
   return (
-    <div className="item w-1/3 h-[25vh] p-[0.25rem]">
+    <div className="item lg:w-1/3 md:w-1/2 w-full h-[25vh] p-[0.25rem]">
       <div className="w-full h-full border border-gray-500 rounded-md bg-gray-950 py-3 px-4 flex flex-col justify-between">
         <div className="upper">
-          <h2 className="item-title text-xl font-normal mb-3 relative pb-2 flex justify-between">
+          <h2 className="item-title lg:text-xl text-[0.875rem] font-normal mb-3 relative pb-2 flex justify-between">
             <span className="item-line w-full absolute bottom-0 left-0 h-[1px] bg-gray-500"></span>
             {title}
             <span
-              className="text-sm py-1 px-3 border border-gray-500 rounded-md hover:bg-gray-700 cursor-pointer"
+              className="lg:text-sm  text-[0.75rem] py-1 px-3 border border-gray-500 rounded-md hover:bg-gray-700 cursor-pointer"
               onClick={handleOpenDetailModal}
             >
               자세히
             </span>
           </h2>
-          <p>{textLengthOverCut(description, 60, "...")}</p>
+          <p className="text-sm lg:text-[1rem]">
+            {textLengthOverCut(description, 60, "...")}
+          </p>
         </div>
         <div className="lower">
-          <p className="date text-sm mb-1">{date}</p>
-          <div className="item-footer flex justify-between">
+          <p className="date lg:text-sm text-[0.75rem] mb-1">{date}</p>
+          <div className="item-footer flex justify-between flex-col md:flex-row gap-2">
             <div className="item-footer-left flex gap-2">
               {iscompleted ? (
                 <button

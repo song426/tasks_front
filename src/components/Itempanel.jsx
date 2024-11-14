@@ -7,6 +7,7 @@ import { fetchGetItemsData } from "../redux/slices/apiSlice";
 import { SkeletonTheme } from "react-loading-skeleton";
 import LoadingSkeleton from "./LoadingSkeleton";
 import Modal from "./Modal";
+import { openModal } from "../redux/slices/modalSlice";
 
 const Itempanel = ({ pageTitle, filterCompleted, filterImportant }) => {
   // console.log(filterCompleted, filterImportant);
@@ -67,13 +68,25 @@ const Itempanel = ({ pageTitle, filterCompleted, filterImportant }) => {
       return filterImportant ? task.isimportant : !task.isimportant;
     });
 
+  const handleOpenModal = () => {
+    dispatch(openModal({ modalType: "create", task: null }));
+  };
+
   return (
-    <div className="panel bg-[212121] w-4/5 h-full rounded-md border border-gray-500 py-5 px-4 overflow-y-auto ">
+    <div className="panel bg-[212121] lg:w-4/5 w-[calc(100%-80px)] h-full  rounded-md border border-gray-500 py-5 px-4 overflow-y-auto ">
       {userKey ? (
         <div className="panel-wrapper w-full h-full">
           {isOpen && <Modal />}
+          <div className="flex justify-between items-center">
+            <PageTitle title={pageTitle} />
+            <button
+              className="lg:text-sm  text-[0.75rem] py-1 px-3 border border-gray-500 rounded-md hover:bg-gray-700 cursor-pointer"
+              onClick={handleOpenModal}
+            >
+              할 일 추가
+            </button>
+          </div>
 
-          <PageTitle title={pageTitle} />
           <div className="items flex flex-wrap">
             {loading ? (
               <SkeletonTheme
@@ -99,7 +112,7 @@ const Itempanel = ({ pageTitle, filterCompleted, filterImportant }) => {
       ) : (
         <div className="w-full h-full flex items-center justify-center">
           <button className="flex justify-center items-center bg-gray-300 text-gray-900 py-2 px-4 rounded-md cursor-default">
-            <span className="text-sm font-semibold">
+            <span className="md:text-sm text-[0.625rem] font-semibold">
               로그인이 필요한 서비스입니다.
             </span>
           </button>
